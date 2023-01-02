@@ -117,7 +117,7 @@ class ComicInfo:
             html_parser = _HTMLDataParser()
             html_parser.feed(description_element.text)
             comic_info.Summary = html_parser.string_representation
-        ## Calibre Custom Columns (must be lowercase)
+        ## Calibre Custom Columns (must be same case as ComicInfo tag or lowercase)
         for attribute in ComicInfo._comicinfo_schema_attribute_names(schema_version):
             custom_column_element = metadata_opf.find(f'.//opf:meta[@name="calibre:user_metadata:#{attribute}"]', XML_NAMESPACES)
             if custom_column_element is None:
