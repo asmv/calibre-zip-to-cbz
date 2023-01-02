@@ -35,51 +35,51 @@ class ComicInfo:
         self._schema_version = schema_version
         ## Schema
         ### V1.0
-        self.title : str = None
-        self.series : str = None
-        self.number : str = None
-        self.count : int = None
-        self.volume : int = None
-        self.alternate_series : str = None
-        self.alternate_number : str = None
-        self.alternate_count : int = None
-        self.summary : str = None
-        self.notes : str = None
-        self.year : int = None
-        self.month : int = None
-        self.writer : str = None
-        self.penciller : str = None
-        self.inker : str = None
-        self.colorist : str = None
-        self.letterer : str = None
-        self.cover_artist : str = None
-        self.editor: str = None
-        self.publisher : str = None
-        self.imprint : str = None
-        self.genre : str = None
-        self.web : str = None
-        self.page_count : int = None
-        self.language_ISO : str = None
-        self.format : str = None
-        self.black_and_white : str = None
-        self.manga : str = None
+        self.Title : str = None
+        self.Series : str = None
+        self.Number : str = None
+        self.Count : int = None
+        self.Volume : int = None
+        self.AlternateSeries : str = None
+        self.AlternateNumber : str = None
+        self.AlternateCount : int = None
+        self.Summary : str = None
+        self.Notes : str = None
+        self.Year : int = None
+        self.Month : int = None
+        self.Writer : str = None
+        self.Penciller : str = None
+        self.Inker : str = None
+        self.Colorist : str = None
+        self.Letterer : str = None
+        self.CoverArtist : str = None
+        self.Editor: str = None
+        self.Publisher : str = None
+        self.Imprint : str = None
+        self.Genre : str = None
+        self.Web : str = None
+        self.PageCount : int = None
+        self.LanguageISO : str = None
+        self.Format : str = None
+        self.BlackAndWhite : str = None
+        self.Manga : str = None
         # pages not supported
         ### V2.0
-        self.characters : str = None
-        self.teams : str = None
-        self.locations : str = None
-        self.scan_information : str = None
-        self.story_arc : str = None
-        self.series_group : str = None
-        self.age_rating : str = None
-        self.day : int = None
-        self.community_rating : float = None
-        self.main_character_or_team : str = None
-        self.review : str = None
+        self.Characters : str = None
+        self.Teams : str = None
+        self.Locations : str = None
+        self.ScanInformation : str = None
+        self.StoryArc : str = None
+        self.SeriesGroup : str = None
+        self.AgeRating : str = None
+        self.Day : int = None
+        self.CommunityRating : float = None
+        self.MainCharacterOrTeam : str = None
+        self.Review : str = None
         ### V2.1
-        self.tags : str = None
-        self.translator : str = None
-        self.story_arc_number : int = None
+        self.Tags : str = None
+        self.Translator : str = None
+        self.StoryArcNumber : int = None
 
     @staticmethod
     @functools.lru_cache(maxsize=3)
@@ -96,12 +96,12 @@ class ComicInfo:
         # Set ComicInfo attributes
         title_element = metadata_opf.find(".//dc:title", XML_NAMESPACES)
         if title_element is not None:
-            comic_info.title = title_element.text
+            comic_info.Title = title_element.text
         description_element = metadata_opf.find(".//dc:description", XML_NAMESPACES)
         if description_element is not None:
             html_parser = _HTMLDataParser()
             html_parser.feed(description_element.text)
-            comic_info.summary = html_parser.string_representation
+            comic_info.Summary = html_parser.string_representation
         return comic_info
 
     def to_comic_info_xml(self, xml_file: pathlib.Path):
@@ -109,9 +109,8 @@ class ComicInfo:
         comic_info = et.Element('ComicInfo')
         for attrib, value in vars(self).items():
             if not attrib.startswith("_"):
-                xml_attrib_name = ''.join([s[0].upper() + s[1:] for s in attrib.split('_') if len(s) > 0])
-                if xml_attrib_name in comic_info_schema_attributes and value is not None:
-                    element = et.Element(xml_attrib_name)
+                if attrib in comic_info_schema_attributes and value is not None:
+                    element = et.Element(attrib)
                     element.text = str(value)
                     comic_info.insert(0, element)
         et.ElementTree.write(et.ElementTree(comic_info), xml_file, xml_declaration=True, encoding='UTF-8', method='xml', short_empty_elements=False)
