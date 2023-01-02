@@ -33,7 +33,7 @@ def main():
                     for image in temporary_directory_path.glob("*/OEBPS/image/*"):
                         destination_cbz.write(image, images_path.joinpath(image.name))
                     with tempfile.NamedTemporaryFile(mode="w+", encoding="UTF-8", delete=False) as comicinfo_xml_temporary_file:
-                        comicinfo_xml_temporary_file_path = pathlib.Path(comicinfo_xml_temporary_file)
+                        comicinfo_xml_temporary_file_path = pathlib.Path(comicinfo_xml_temporary_file.name)
                         comic_info.to_comic_info_xml(comicinfo_xml_temporary_file_path)
                         destination_cbz.write(comicinfo_xml_temporary_file_path, "ComicInfo.xml")
 

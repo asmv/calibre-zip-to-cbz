@@ -83,7 +83,7 @@ class ComicInfo:
     @staticmethod
     def from_calibre_metadata_opf(calibre_metadata_opf_path: pathlib.Path, schema_version: ComicInfoSchemaVersion):
         comic_info = ComicInfo(schema_version)
-        metadata_opf: et.Element = et.ElementTree.parse(calibre_metadata_opf_path)
+        metadata_opf: et.Element = et.parse(calibre_metadata_opf_path)
         # Set ComicInfo attributes
         title_element = metadata_opf.find("./dc:title", XML_NAMESPACES)
         if title_element is not None:
