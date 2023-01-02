@@ -5,6 +5,7 @@ import xml.etree.ElementTree as et
 import html.parser
 import functools
 import json
+import datetime
 
 
 XML_NAMESPACES = {
@@ -111,6 +112,13 @@ class ComicInfo:
         publisher_element = metadata_opf.find(".//dc:publisher", XML_NAMESPACES)
         if publisher_element is not None:
             comic_info.Publisher = publisher_element.text
+        ## Date
+        date_element = metadata_opf.find(".//dc:date", XML_NAMESPACES)
+        if date_element is not None:
+            date = datetime.datetime.fromisoformat(date_element.text)
+            comic_info.Year = date.year
+            comic_info.Month = date.month
+            comic_info.Day = date.day
         ## Description
         description_element = metadata_opf.find(".//dc:description", XML_NAMESPACES)
         if description_element is not None:
