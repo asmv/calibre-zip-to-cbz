@@ -4,6 +4,24 @@ import pathlib
 import tempfile
 import xml.etree.ElementTree as et
 import xml.dom.minidom as md
+import html.parser
+
+
+XML_NAMESPACES = {
+    'xs': 'http://www.w3.org/2001/XMLSchema',
+    'dc': 'http://purl.org/dc/elements/1.1/',
+    'opf': 'http://www.idpf.org/2007/opf'
+}
+
+
+class _HTMLDataParser(html.parser.HTMLParser):
+
+    def __init__(self, *, convert_charrefs: bool = ...) -> None:
+        self.string_representation = ""
+        super().__init__(convert_charrefs=convert_charrefs)
+
+    def handle_data(self, data: str) -> None:
+        self.string_representation += data
 
 
 class ComicInfoSchemaVersion(enum.Enum):
@@ -64,11 +82,26 @@ class ComicInfo:
         self.translator : str = None
         self.story_arc_number : int = None
 
+    @classmethod
+    def from_calibre_metadata_opf(calibre_metadata_opf_path: pathlib.Path, schema_version: ComicInfoSchemaVersion):
+        comic_info = ComicInfo(schema_version)
+        metadata_opf: et.Element = et.ElementTree.parse(calibre_metadata_opf_path)
+        # Set ComicInfo attributes
+        title_element = metadata_opf.find("./dc:title", XML_NAMESPACES)
+        if title_element is not None:
+            comic_info.title = title_element.text
+        description_element = metadata_opf.find("./dc:description", XML_NAMESPACES)
+        if description_element is not None:
+            html_parser = _HTMLDataParser()
+            html_parser.feed(description_element.text)
+            comic_info.summary = html_parser.string_representation
+        return comic_info
+
     def to_comic_info_xml(self) -> str:
         comic_info_schema_attributes: List[str]
         with open(pathlib.Path(__file__).parent.joinpath(self._schema_version.value), "r") as schema_file:
             schema = et.parse(schema_file)
-            comic_info_complex_type_schema = schema.findall('./xs:complexType[@name="ComicInfo"]', {'xs': 'http://www.w3.org/2001/XMLSchema'})[0]
+            comic_info_complex_type_schema = schema.findall('./xs:complexType[@name="ComicInfo"]', XML_NAMESPACES)[0]
             comic_info_schema_attributes = [element.attrib['name'] for element in comic_info_complex_type_schema[0] if 'name' in element.attrib]
         comic_info = et.Element('ComicInfo')
         for attrib, value in vars(self).items():
