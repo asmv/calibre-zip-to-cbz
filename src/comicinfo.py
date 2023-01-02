@@ -4,6 +4,7 @@ import pathlib
 import xml.etree.ElementTree as et
 import html.parser
 import functools
+import json
 
 
 XML_NAMESPACES = {
@@ -102,6 +103,11 @@ class ComicInfo:
             html_parser = _HTMLDataParser()
             html_parser.feed(description_element.text)
             comic_info.Summary = html_parser.string_representation
+        for attribute in ComicInfo._comicinfo_schema_attribute_names(schema_version):
+            custom_column_element = metadata_opf.find(f'.//opf:meta[@name="calibre:user_metadata:#{attribute.lower()}"]', XML_NAMESPACES)
+            if custom_column_element is not None:
+                custom_column_content_json = json.loads(custom_column_element.attrib['content'])
+                setattr(comic_info, attribute, custom_column_content_json['#value#'])
         return comic_info
 
     def to_comic_info_xml(self, xml_file: pathlib.Path):
