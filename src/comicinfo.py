@@ -1,8 +1,9 @@
-from typing import List
+from typing import Set
 import enum
 import pathlib
 import xml.etree.ElementTree as et
 import html.parser
+import functools
 
 
 XML_NAMESPACES = {
@@ -81,6 +82,14 @@ class ComicInfo:
         self.story_arc_number : int = None
 
     @staticmethod
+    @functools.lru_cache(maxsize=3)
+    def _comicinfo_schema_attribute_names(schema_version: ComicInfoSchemaVersion) -> Set[str]:
+        with open(pathlib.Path(__file__).parent.joinpath(schema_version.value), "r") as schema_file:
+            schema = et.parse(schema_file)
+            comic_info_complex_type_schema = schema.findall('./xs:complexType[@name="ComicInfo"]', XML_NAMESPACES)[0]
+            return {element.attrib['name'] for element in comic_info_complex_type_schema[0] if 'name' in element.attrib}
+
+    @staticmethod
     def from_calibre_metadata_opf(calibre_metadata_opf_path: pathlib.Path, schema_version: ComicInfoSchemaVersion):
         comic_info = ComicInfo(schema_version)
         metadata_opf: et.Element = et.parse(calibre_metadata_opf_path).getroot()
@@ -96,11 +105,7 @@ class ComicInfo:
         return comic_info
 
     def to_comic_info_xml(self, xml_file: pathlib.Path):
-        comic_info_schema_attributes: List[str]
-        with open(pathlib.Path(__file__).parent.joinpath(self._schema_version.value), "r") as schema_file:
-            schema = et.parse(schema_file)
-            comic_info_complex_type_schema = schema.findall('./xs:complexType[@name="ComicInfo"]', XML_NAMESPACES)[0]
-            comic_info_schema_attributes = [element.attrib['name'] for element in comic_info_complex_type_schema[0] if 'name' in element.attrib]
+        comic_info_schema_attributes = self._comicinfo_schema_attribute_names(self._schema_version)
         comic_info = et.Element('ComicInfo')
         for attrib, value in vars(self).items():
             if not attrib.startswith("_"):
