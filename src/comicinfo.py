@@ -95,16 +95,26 @@ class ComicInfo:
         comic_info = ComicInfo(schema_version)
         metadata_opf: et.Element = et.parse(calibre_metadata_opf_path).getroot()
         # Set ComicInfo attributes
+        ## Title
         title_element = metadata_opf.find(".//dc:title", XML_NAMESPACES)
         if title_element is not None:
             comic_info.Title = title_element.text
+        ## Publisher
+        publisher_element = metadata_opf.find(".//dc:publisher", XML_NAMESPACES)
+        if publisher_element is not None:
+            comic_info.Publisher = publisher_element.text
+        ## Description
         description_element = metadata_opf.find(".//dc:description", XML_NAMESPACES)
         if description_element is not None:
             html_parser = _HTMLDataParser()
             html_parser.feed(description_element.text)
             comic_info.Summary = html_parser.string_representation
+        ## Calibre Custom Columns (must be lowercase)
         for attribute in ComicInfo._comicinfo_schema_attribute_names(schema_version):
-            custom_column_element = metadata_opf.find(f'.//opf:meta[@name="calibre:user_metadata:#{attribute.lower()}"]', XML_NAMESPACES)
+            custom_column_element = metadata_opf.find(f'.//opf:meta[@name="calibre:user_metadata:#{attribute}"]', XML_NAMESPACES)
+            if custom_column_element is None:
+                # Try lowercase attribute
+                custom_column_element = metadata_opf.find(f'.//opf:meta[@name="calibre:user_metadata:#{attribute.lower()}"]', XML_NAMESPACES)
             if custom_column_element is not None:
                 custom_column_content_json = json.loads(custom_column_element.attrib['content'])
                 setattr(comic_info, attribute, custom_column_content_json['#value#'])
