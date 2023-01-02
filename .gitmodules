@@ -1,0 +1,3 @@
+[submodule "comicinfo"]
+	path = comicinfo
+	url = https://github.com/anansi-project/comicinfo.git
