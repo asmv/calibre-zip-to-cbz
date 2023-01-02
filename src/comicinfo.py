@@ -1,9 +1,7 @@
 from typing import List
 import enum
 import pathlib
-import tempfile
 import xml.etree.ElementTree as et
-import xml.dom.minidom as md
 import html.parser
 
 
@@ -82,7 +80,7 @@ class ComicInfo:
         self.translator : str = None
         self.story_arc_number : int = None
 
-    @classmethod
+    @staticmethod
     def from_calibre_metadata_opf(calibre_metadata_opf_path: pathlib.Path, schema_version: ComicInfoSchemaVersion):
         comic_info = ComicInfo(schema_version)
         metadata_opf: et.Element = et.ElementTree.parse(calibre_metadata_opf_path)
@@ -97,7 +95,7 @@ class ComicInfo:
             comic_info.summary = html_parser.string_representation
         return comic_info
 
-    def to_comic_info_xml(self) -> str:
+    def to_comic_info_xml(self, xml_file: pathlib.Path):
         comic_info_schema_attributes: List[str]
         with open(pathlib.Path(__file__).parent.joinpath(self._schema_version.value), "r") as schema_file:
             schema = et.parse(schema_file)
@@ -111,7 +109,4 @@ class ComicInfo:
                     element = et.Element(xml_attrib_name)
                     element.text = str(value)
                     comic_info.insert(0, element)
-        with tempfile.SpooledTemporaryFile(max_size=8000000, mode="wb+") as temp_file:
-            et.ElementTree.write(et.ElementTree(comic_info), temp_file, xml_declaration=True, encoding='UTF-8', method='xml', short_empty_elements=False)
-            temp_file.seek(0)
-            return md.parseString(temp_file.read().decode()).toprettyxml().strip()
+        et.ElementTree.write(et.ElementTree(comic_info), xml_file, xml_declaration=True, encoding='UTF-8', method='xml', short_empty_elements=False)
