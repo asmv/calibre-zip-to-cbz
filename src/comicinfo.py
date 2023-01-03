@@ -119,6 +119,10 @@ class ComicInfo:
             comic_info.Year = date.year
             comic_info.Month = date.month
             comic_info.Day = date.day
+        ## Language
+        language_element = metadata_opf.find(".//dc:language", XML_NAMESPACES)
+        if language_element is not None:
+            comic_info.LanguageISO = language_element.text
         ## Description
         description_element = metadata_opf.find(".//dc:description", XML_NAMESPACES)
         if description_element is not None:
