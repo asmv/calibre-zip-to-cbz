@@ -34,8 +34,12 @@ def main():
                     cover = next(temporary_directory_path.glob("*/cover.*"), None)
                     if cover is not None:
                         destination_cbz.write(cover, images_path.joinpath(f"000000_{cover.name}"))
+                    page_count = 0
                     for image in temporary_directory_path.glob("*/OEBPS/image/*"):
                         destination_cbz.write(image, images_path.joinpath(image.name))
+                        page_count += 1
+                    # Set PageCount manually here since metadata.opf does not contain that information
+                    comic_info.PageCount = page_count
                     with tempfile.NamedTemporaryFile(mode="w+", encoding="UTF-8", delete=False) as comicinfo_xml_temporary_file:
                         comicinfo_xml_temporary_file_path = pathlib.Path(comicinfo_xml_temporary_file.name)
                         comic_info.to_comic_info_xml(comicinfo_xml_temporary_file_path)
