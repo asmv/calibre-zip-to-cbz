@@ -7,6 +7,10 @@ import comicinfo
 import logging
 logger = logging.getLogger(__file__)
 
+
+IMAGE_FILE_FORMATS = ["*.jpg", "*.jpeg", "*.png", "*.gif", "*.bmp", "*.tiff", "*.tif", "*.webp"]
+
+
 def main():
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument("paths", nargs="+", help="The path to the Calibre library or multiple paths to a specific subfolders of that library. \
@@ -57,11 +61,14 @@ def main():
                         else:
                             logger.warning("No cover file found for zip archive, skipping cover creation.")
                         page_count = 0
-                        for image in temporary_directory_path.glob("*/OEBPS/image/*"):
-                            image_arcname = images_path.joinpath(image.name)
-                            logger.debug('Writing image "%s" to cbz archive as "%s"', image.relative_to(temporary_directory_path), image_arcname)
-                            destination_cbz.write(image, image_arcname)
-                            page_count += 1
+                        for pattern in IMAGE_FILE_FORMATS:
+                            for image in temporary_directory_path.rglob(pattern):
+                                if image.stem.startswith("cover"):
+                                    continue
+                                image_arcname = images_path.joinpath(image.name)
+                                logger.debug('Writing image "%s" to cbz archive as "%s"', image.relative_to(temporary_directory_path), image_arcname)
+                                destination_cbz.write(image, image_arcname)
+                                page_count += 1
                         if page_count == 0:
                             logger.error('NO PAGES found in zip archive "%s". The source format may not be supported. Try unzipping the archive and checking the format of the contained images.', zip_file)
                         # Set PageCount manually here since metadata.opf does not contain that information
