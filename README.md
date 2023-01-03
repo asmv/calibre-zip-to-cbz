@@ -8,6 +8,8 @@ The conversion adds a ComicInfo.xml file into the resulting cbz file which provi
 
 Note that this will only work on specific types of books, in particular those containing every page as an image file.
 
+This program has no external code dependencies (on either pip packages or binaries) and should work on python versions 6.1 and above.
+
 ## Cloning the Repository
 
 This repository contains a submodule for the ComicInfo.xml XSD definition files. To run the script you will need to clone the submodule using a command such as `git clone --recurse-submodules https://github.com/asmv/calibre-zip-to-cbz.git` (git 2.13+) or `git clone --recursive https://github.com/asmv/calibre-zip-to-cbz.git`.
