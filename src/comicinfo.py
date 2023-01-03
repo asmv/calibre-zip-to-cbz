@@ -92,7 +92,7 @@ class ComicInfo:
             return {element.attrib['name'] for element in comic_info_complex_type_schema[0] if 'name' in element.attrib}
 
     @staticmethod
-    def from_calibre_metadata_opf(calibre_metadata_opf_path: pathlib.Path, schema_version: ComicInfoSchemaVersion):
+    def from_calibre_metadata_opf(calibre_metadata_opf_path: pathlib.Path, schema_version: ComicInfoSchemaVersion, tags_to_genre: bool = False):
         comic_info = ComicInfo(schema_version)
         metadata_opf: et.Element = et.parse(calibre_metadata_opf_path).getroot()
         # Set ComicInfo attributes
@@ -129,10 +129,14 @@ class ComicInfo:
             html_parser = _HTMLDataParser()
             html_parser.feed(description_element.text)
             comic_info.Summary = html_parser.string_representation
-        ## Tags
+        ## Tags/ Genre
         tag_elements = metadata_opf.findall(".//dc:subject", XML_NAMESPACES)
         if len(tag_elements) > 0:
-            comic_info.Tags = ','.join([element.text for element in tag_elements])
+            tags_comma_separated = ','.join([element.text for element in tag_elements])
+            if tags_to_genre:
+                comic_info.Genre = tags_comma_separated
+            else:
+                comic_info.Tags = tags_comma_separated
         ## Calibre Custom Columns (must be same case as ComicInfo tag or lowercase)
         for attribute in ComicInfo._comicinfo_schema_attribute_names(schema_version):
             custom_column_element = metadata_opf.find(f'.//opf:meta[@name="calibre:user_metadata:#{attribute}"]', XML_NAMESPACES)

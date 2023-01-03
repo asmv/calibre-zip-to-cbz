@@ -13,6 +13,7 @@ def main():
     parser.add_argument("--comicinfo-schema-version", "--schema", choices=["1.0", "2.0", "2.1"], default="2.0")
     parser.add_argument("--output-directory", "-o", type=pathlib.Path, help="Output resulting '.cbz' file to an alternate location.")
     parser.add_argument("--group-by-series", action="store_true", default=False, help="If an output directory is specified, group the resulting output by series name. 'Other' is used as the series name if the series is not present in metadata.")
+    parser.add_argument("--tags-to-genre", action="store_true", default=False, help="Write Calibre subject (shown as 'Tags' in the GUI) to the 'genre' ComicInfo.xml field instead of the 'Tags' field in schema version 2.1+")
     args = parser.parse_args()
     schema_version: comicinfo.ComicInfoSchemaVersion = None
     if args.comicinfo_schema_version == "1.0":
