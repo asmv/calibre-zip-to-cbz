@@ -12,9 +12,9 @@ The conversion adds a ComicInfo.xml file into the resulting cbz file which provi
 
 ## Cloning the Repository
 
-This repository contains a submodule for the ComicInfo.xml XSD definition files. To run the script you will need to clone the submodule using a command such as `git clone --recurse-submodules https://github.com/asmv/calibre-zip-to-cbz.git` (git 2.13+) or `git clone --recursive https://github.com/asmv/calibre-zip-to-cbz.git`.
+This repository contains a submodule for the ComicInfo.xml XSD definition files. To run the script you will need to clone the submodule using a command such as `git clone --recurse-submodules https://github.com/asmv/calibre-zip-to-cbz.git` (git 2.13+) or `git clone --recursive https://github.com/asmv/calibre-zip-to-cbz.git` (git 1.6.5+).
 
-See [this stackovwerflow answer](https://stackoverflow.com/questions/3796927/how-do-i-git-clone-a-repo-including-its-submodules) for more info.
+See [this stackoverflow answer](https://stackoverflow.com/questions/3796927/how-do-i-git-clone-a-repo-including-its-submodules) for more info.
 
 ## Usage
 
