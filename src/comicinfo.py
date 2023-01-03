@@ -175,7 +175,7 @@ class ComicInfo:
                 if attrib in comic_info_schema_attributes and value is not None:
                     element = et.Element(attrib)
                     element.text = str(value)
-                    logger.debug('Adding attribute %s as chile to ComicInfo', attrib)
+                    logger.debug('Adding attribute %s as child to ComicInfo', attrib)
                     comic_info.insert(0, element)
         logger.debug('Writing resulting ComicInfo XML to file "%s"', xml_file)
         et.ElementTree.write(et.ElementTree(comic_info), xml_file, xml_declaration=True, encoding='UTF-8', method='xml', short_empty_elements=False)
