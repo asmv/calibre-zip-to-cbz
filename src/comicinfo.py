@@ -141,7 +141,8 @@ class ComicInfo:
                 custom_column_element = metadata_opf.find(f'.//opf:meta[@name="calibre:user_metadata:#{attribute.lower()}"]', XML_NAMESPACES)
             if custom_column_element is not None:
                 custom_column_content_json = json.loads(custom_column_element.attrib['content'])
-                setattr(comic_info, attribute, custom_column_content_json['#value#'])
+                value = custom_column_content_json['#value#']
+                setattr(comic_info, attribute, ','.join(value) if type(value) is list else value)
         return comic_info
 
     def to_comic_info_xml(self, xml_file: pathlib.Path):
