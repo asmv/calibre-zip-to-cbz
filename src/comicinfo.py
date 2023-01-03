@@ -101,13 +101,13 @@ class ComicInfo:
         if title_element is not None:
             comic_info.Title = title_element.text
         ## Series
-        series_element = metadata_opf.find(".//opf:meta[@name='series']", XML_NAMESPACES)
+        series_element = metadata_opf.find(".//opf:meta[@name='calibre:series']", XML_NAMESPACES)
         if series_element is not None:
             comic_info.Series = series_element.attrib['content']
         ## Series Number
-        series_element = metadata_opf.find(".//opf:meta[@name='series_index']", XML_NAMESPACES)
+        series_element = metadata_opf.find(".//opf:meta[@name='calibre:series_index']", XML_NAMESPACES)
         if series_element is not None:
-            comic_info.Series = series_element.attrib['content']
+            comic_info.Number = series_element.attrib['content']
         ## Publisher
         publisher_element = metadata_opf.find(".//dc:publisher", XML_NAMESPACES)
         if publisher_element is not None:
