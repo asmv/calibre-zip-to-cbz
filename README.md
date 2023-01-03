@@ -6,9 +6,9 @@ This is a utility to convert the output of calibre's EPUB -> ZIP conversion to a
 
 The conversion adds a ComicInfo.xml file into the resulting cbz file which provides metadata to supported applications.
 
-Note that this will only work on specific types of books, in particular those containing every page as an image file.
+**Note**: This program has no external code dependencies (on either pip packages or binaries) and should work on python versions 6.1 and above.
 
-This program has no external code dependencies (on either pip packages or binaries) and should work on python versions 6.1 and above.
+**Note**: This utility will only work for specific types of books, in particular those containing every page as an image file.
 
 ## Cloning the Repository
 
