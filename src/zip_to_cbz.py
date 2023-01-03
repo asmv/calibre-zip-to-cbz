@@ -47,6 +47,8 @@ def main():
                     else:
                         destination = args.output_directory.joinpath(cbz_file.name) if args.group_by_series else args.output_directory.joinpath(cbz_file.name)
                     destination.parent.mkdir(exist_ok=True, parents=True)
+                    if destination.exists() and destination.is_file():
+                        destination.unlink()
                     shutil.move(cbz_file, destination)
 
 
