@@ -62,6 +62,8 @@ def main():
                             logger.debug('Writing image "%s" to cbz archive as "%s"', image.relative_to(temporary_directory_path), image_arcname)
                             destination_cbz.write(image, image_arcname)
                             page_count += 1
+                        if page_count == 0:
+                            logger.error('NO PAGES found in zip archive "%s". The source format may not be supported. Try unzipping the archive and checking the format of the contained images.', zip_file)
                         # Set PageCount manually here since metadata.opf does not contain that information
                         logger.debug("Setting PageCount of comicinfo to %i", page_count)
                         comic_info.PageCount = page_count
