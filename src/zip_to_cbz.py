@@ -34,9 +34,12 @@ def main():
     for path in args.paths:
         logger.info('Processing files under path "%s"', path)
         for metadata_opf_file in pathlib.Path(path).rglob("metadata.opf"):
+            zip_files = list(metadata_opf_file.parent.glob("*.zip"))
+            if len(zip_files) == 0:
+                continue
             logger.debug('Found metadata.opf file in directory "%s"', metadata_opf_file.parent)
             comic_info = comicinfo.ComicInfo.from_calibre_metadata_opf(metadata_opf_file, schema_version)
-            for zip_file in metadata_opf_file.parent.glob("*.zip"):
+            for zip_file in zip_files:
                 cbz_file = zip_file.with_suffix(".cbz")
                 logger.info('Converting zip achive "%s" in directory "%s" to cbz file', zip_file.name, zip_file.parent)
                 with tempfile.TemporaryDirectory() as temporary_directory:
